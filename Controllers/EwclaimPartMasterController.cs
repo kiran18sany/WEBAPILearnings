@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +12,8 @@ namespace WarrantyAPITest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
     public class EwclaimPartMasterController: ControllerBase
     {
         private readonly IEwclaimPartMasterRepository _IEwclaimPartMasterRepository;
@@ -49,11 +53,29 @@ namespace WarrantyAPITest.Controllers
         }
 
 
+
+
         [HttpPut("{partid}")]
         public async Task<ActionResult> UpdateNewPart([FromRoute] int partid, [FromBody] EwclaimPartMaster _part)
         {
+            /*
+            //Method 1 - with all fields
            await _IEwclaimPartMasterRepository.UpdateAsync(partid, _part);
             return  Ok();
+            */
+
+            //Method 2 - Just Map
+            if (_part == null)
+                return BadRequest("Invalid data.");
+
+            var updated = await _IEwclaimPartMasterRepository.UpdatePartAsync(partid, _part);
+
+            if (!updated)
+                return NotFound($"No part found with ID = {partid}");
+
+            return Ok("Part updated successfully.");
+
+
         }
 
         [HttpPatch("{partid}")]
