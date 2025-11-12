@@ -6,6 +6,7 @@ namespace WarrantyAPITest.Interfaces
     public interface IAccountRepository
     {
         Task<IdentityResult> SignUpAsync(SignUp signupModel);
+        Task<string> LoginAsync(SignIn signinModel);
 
     }
 }
