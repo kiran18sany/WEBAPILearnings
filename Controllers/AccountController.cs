@@ -27,6 +27,19 @@ namespace WarrantyAPITest.Controllers
            
         }
 
-      
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] SignIn signinModel)
+        {
+
+            var result = await _accountRepository.LoginAsync(signinModel);
+            if (string.IsNullOrEmpty(result)) {
+                return Unauthorized();
+            }
+            return Ok(result);
+
+
+        }
+
+
     }
 }
